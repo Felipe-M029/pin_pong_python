@@ -43,9 +43,33 @@ class Player2(GameSprite):
             self.rect.y += self.speed_y
 
 class Ball(GameSprite):
+    
     def update(self):
         self.rect.x += self.speed_x
         self.rect.y += self.speed_y
+        if sprite.collide_rect(self,player1):
+            self.speed_x *= -1
+            self.speed_y *= 1
+        if sprite.collide_rect(self,player2):
+            self.speed_x *= -1
+            self.speed_y *= 1
+        if self.rect.y < 0:
+            self.speed_y *= -1
+            self.speed_x *= 1
+        if self.rect.y > 485:
+            self.speed_y *= -1
+            self.speed_x *= 1
+        global finish
+        if self.rect.x > 700:
+            
+            finish = True
+            print("",self.rect.x)
+        if self.rect.x < 0:
+            
+            finish = True
+
+
+        
 
 
 
@@ -60,8 +84,13 @@ background = transform.scale(image.load("background-1634817_1280.png"),(window_w
 
 player1 = Player("Icon76@2x copy.png", 100,200,0,5,20,100)
 player2 = Player2("Icon76@2x copy.png", 550,200,0,5,20,100)
-bola = Ball("Ball.png",350,250,5,5,15,15)
+bola = Ball("Ball.png",350,250,3,3,15,15)
 
+font.init()
+font1 = font.SysFont("Arial",50) 
+font2 = font.SysFont("Arial",50) 
+
+finish = False
 run = True
 while run:
 
@@ -69,16 +98,29 @@ while run:
     for e in event.get():
         if e.type == QUIT:
             run = False
-    window.blit(background,(0,0))
+    if finish == False:
+        window.blit(background,(0,0))
+        
+        player1.update()
+        player1.reset()
+
+        player2.update()
+        player2.reset()
+
+        bola.update()
+        bola.reset()
     
-    player1.update()
-    player1.reset()
 
-    player2.update()
-    player2.reset()
-
-    bola.update()
-    bola.reset()
+        print("finish",finish)
+    elif finish == True:
+        
+        print("final")
+        if bola.rect.x > 700:
+            winP1 = font1.render("Ganaste Player 1",1,(255,255,0))
+            window.blit(winP1,(230,250))
+        if bola.rect.x < 0:
+            winP2 = font2.render("Ganaste Player 2",1,(255,255,0))
+            window.blit(winP2,(230,250))
 
 
     display.update()
