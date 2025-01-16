@@ -1,7 +1,6 @@
 from pygame import *
 
-
-
+ 
 class GameSprite(sprite.Sprite):
     # constructor de clase
     def __init__(self, player_image, player_x, player_y, player_speed_x,player_speed_y,player_size_x,player_size_y):
@@ -50,15 +49,20 @@ class Ball(GameSprite):
         if sprite.collide_rect(self,player1):
             self.speed_x *= -1
             self.speed_y *= 1
+            self.speed_x += 0.5
+            self.speed_y += 0.5
         if sprite.collide_rect(self,player2):
             self.speed_x *= -1
             self.speed_y *= 1
+            self.speed_x += -0.5
+            self.speed_y += 1
         if self.rect.y < 0:
             self.speed_y *= -1
             self.speed_x *= 1
-        if self.rect.y > 485:
+        if self.rect.y > 475:
             self.speed_y *= -1
             self.speed_x *= 1
+
         global finish
         if self.rect.x > 700:
             
@@ -81,14 +85,18 @@ window = display.set_mode((window_width,window_height))
 display.set_caption("Pong")
 background = transform.scale(image.load("background-1634817_1280.png"),(window_width,window_height))
 
+puntosP1 = 0
+puntosP2 = 0
 
-player1 = Player("Icon76@2x copy.png", 100,200,0,5,20,100)
-player2 = Player2("Icon76@2x copy.png", 550,200,0,5,20,100)
+player1 = Player("Icon76@2x copy.png", 100,200,0,8,25,100)
+player2 = Player2("Icon76@2x copy.png", 550,200,0,8,25,100)
 bola = Ball("Ball.png",350,250,3,3,15,15)
 
 font.init()
 font1 = font.SysFont("Arial",50) 
 font2 = font.SysFont("Arial",50) 
+font3 = font.SysFont("Arial",40)
+font4 = font.SysFont("Arial",40)
 
 finish = False
 run = True
@@ -110,17 +118,51 @@ while run:
         bola.update()
         bola.reset()
     
-
-        print("finish",finish)
+        puntosp1 = font3.render("PuntosP1: "+str(puntosP1),1,(0,0,0))
+        puntosp2 = font4.render("PuntosP2: "+str(puntosP2),1,(0,0,0))
+        
+        window.blit(puntosp1,(0,0))
+        window.blit(puntosp2,(0,40))
+        
     elif finish == True:
         
-        print("final")
         if bola.rect.x > 700:
             winP1 = font1.render("Ganaste Player 1",1,(255,255,0))
             window.blit(winP1,(230,250))
+            puntosP1 += 1
         if bola.rect.x < 0:
             winP2 = font2.render("Ganaste Player 2",1,(255,255,0))
             window.blit(winP2,(230,250))
+            puntosP2 += 1
+        display.update()
+        
+        print("Vamos a reiniciar")
+        time.wait(2000)
+            
+        player1 = Player("Icon76@2x copy.png", 100,200,0,8,25,100)
+        player2 = Player2("Icon76@2x copy.png", 550,200,0,8,25,100)
+        bola = Ball("Ball.png",350,250,3,3,15,15)
+            
+        finish = False
+        
+        
+    if puntosP1 >= 2:
+        winP1 = font2.render("Ganaste la partida Player 1",1,(255,255,0))
+        window.blit(winP1,(130,330))
+        
+        display.update()
+        time.wait(2000)
+        run = False
+        
+    elif puntosP2 >= 3:
+        winP2 = font2.render("Ganaste la partida Player 2",1,(255,255,0))
+        window.blit(winP2,(230,250))
+        display.update()
+        time.wait(2000)
+        run = False    
 
+        
+        
 
     display.update()
+print("Fin")
